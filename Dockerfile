@@ -2,15 +2,16 @@ FROM n8nio/n8n:latest
 
 USER root
 
-RUN apk add --no-cache \
+RUN microdnf install -y \
     python3 \
-    py3-pip \
+    python3-pip \
+    python3-virtualenv \
     libreoffice \
-    libreoffice-calc \
-    ttf-freefont \
-    fontconfig \
     chromium \
-    chromium-chromedriver
+    chromedriver \
+    fontconfig \
+    dejavu-sans-fonts && \
+    microdnf clean all
 
 RUN python3 -m venv /opt/venv
 
@@ -22,7 +23,7 @@ RUN /opt/venv/bin/pip install --no-cache-dir \
     webdriver-manager
 
 ENV PATH="/opt/venv/bin:$PATH"
-ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
 WORKDIR /home/node
