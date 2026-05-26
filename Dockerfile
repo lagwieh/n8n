@@ -2,16 +2,19 @@ FROM n8nio/n8n:latest
 
 USER root
 
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     python3 \
-    python3-pip \
-    python3-venv \
+    py3-pip \
     libreoffice \
+    libreoffice-calc \
+    ttf-freefont \
+    fontconfig \
     chromium \
-    chromium-driver
+    chromium-chromedriver
 
-RUN python3 -m venv /opt/venv && \
-    /opt/venv/bin/pip install --no-cache-dir \
+RUN python3 -m venv /opt/venv
+
+RUN /opt/venv/bin/pip install --no-cache-dir \
     xlrd \
     openpyxl \
     pandas \
@@ -19,7 +22,7 @@ RUN python3 -m venv /opt/venv && \
     webdriver-manager
 
 ENV PATH="/opt/venv/bin:$PATH"
-ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROME_BIN=/usr/bin/chromium-browser
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
 WORKDIR /home/node
