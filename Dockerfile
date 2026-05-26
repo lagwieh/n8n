@@ -1,17 +1,18 @@
-FROM n8nio/n8n:latest
+FROM node:22-bookworm-slim
 
 USER root
 
-RUN microdnf install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
-    python3-virtualenv \
+    python3-venv \
     libreoffice \
     chromium \
-    chromedriver \
+    chromium-driver \
     fontconfig \
-    dejavu-sans-fonts && \
-    microdnf clean all
+    fonts-dejavu \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/venv
 
@@ -22,12 +23,17 @@ RUN /opt/venv/bin/pip install --no-cache-dir \
     selenium \
     webdriver-manager
 
+RUN npm install -g n8n
+
 ENV PATH="/opt/venv/bin:$PATH"
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
+ENV N8N_PORT=10000
+ENV PORT=10000
+
 WORKDIR /home/node
 
-USER node
+EXPOSE 10000
 
-CMD ["n8n"]
+CMD ["n8n", "start"]
