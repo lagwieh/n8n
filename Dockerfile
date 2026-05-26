@@ -1,32 +1,29 @@
-FROM node:22-alpine
+FROM n8nio/n8n:latest
 
 USER root
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     python3 \
-    py3-pip \
+    python3-pip \
+    python3-venv \
     libreoffice \
-    libreoffice-calc \
-    ttf-freefont \
-    fontconfig \
     chromium \
-    chromium-chromedriver
+    chromium-driver
 
-RUN python3 -m venv /opt/venv
-
-RUN /opt/venv/bin/pip install --no-cache-dir \
+RUN python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir \
     xlrd \
     openpyxl \
     pandas \
     selenium \
     webdriver-manager
 
-RUN npm install -g n8n
-
 ENV PATH="/opt/venv/bin:$PATH"
-ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 
 WORKDIR /home/node
+
+USER node
 
 CMD ["n8n"]
